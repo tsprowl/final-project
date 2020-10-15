@@ -15,7 +15,10 @@
   border-radius: 5%;
   margin: auto;
 }
-p 
+h1 {
+  color: white;
+  text-align: center;
+}
 
 table {
   border-collapse: collapse;
