@@ -299,7 +299,7 @@
      *  If the other player wins or game is tied, this event is received
      *  Notify the user about either scenario and end the game.
      */
-    socket.on('gameEnded', function(data){
+    socket.on('gameEnd', function(data){
         game.endGame(data.message);
         socket.leave(data.room);
     })
