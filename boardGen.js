@@ -30,14 +30,9 @@ function init() {
       if (j == N_SIZE - i - 1) {
         cell.classList.add('diagonal1');
       }
-      //cell.identifier = identifier;
       row.appendChild(cell);
       boxes.push(cell);
-      //identifier += identifier;
     }
   }
-
   document.getElementById('tictactoe').appendChild(board);
 }
-
-//init();

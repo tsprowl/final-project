@@ -5,7 +5,7 @@ var io = require('socket.io') (server);
 
 var rooms = 0;
 
-let SERVER_PORT = 4999;
+let SERVER_PORT = 6000;
 
 app.use(express.static('.'));
 
@@ -14,36 +14,26 @@ app.get('/', function (req, res){
 });
 
 io.on('connection', function(socket){
-    //console.log('A user connected!');
 
-    /**
-     *  Create a new game room and notify the creator of game
-     */
 
+      // Create a new game room and notify player 1
      socket.on('createGame', function(data){
          socket.join('room-' + ++rooms);
-		 console.log("createGame boardSize: " + data.boardSize);
          socket.emit('newGame', {name: data.name, room: 'room-'+rooms, boardSize: data.boardSize});
      });
 
 
-     /**
-      *  Connect the Player 2 to the room he requested. Show error if room full.
-      */
-
+      // Connect player 2 to the requested room
       socket.on('joinGame', function(data){
           var room = io.nsps['/'].adapter.rooms[data.room];
           if (room && room.length == 1){
               socket.join(data.room);
-			  console.log("Getting size.");
 			  socket.emit('player2', {name: data.name, room: data.room})
 			  socket.broadcast.to(data.room).emit('sendPlayData', {room: data.room, name: data.name});
-              socket.broadcast.to(data.room).emit('player1', {});
-			  console.log("Sending to P2");
-              
+              socket.broadcast.to(data.room).emit('player1', {});              
           }
           else{
-			  
+            
 			  if(!room) {
 				  socket.emit('err', {message: 'Room does not exist...' + data.room});
 			  }
@@ -52,16 +42,13 @@ io.on('connection', function(socket){
 			  }
           }
       });
+  
 	socket.on('playDataResponse', function(data) {
-		console.log("Received size: " + data.boardSize);
-
 		socket.broadcast.to(data.room).emit('setVals', {room: data.room, boardSize: data.boardSize, name: data.name});
 
 	});
-      /**
-       *  Handle the turn played by either player and notify the other.
-       */
-
+      
+  // Handle a player's turn and pass it to the other
        socket.on('playTurn', function(data){
            socket.broadcast.to(data.room).emit('turnPlayed', {
                tile: data.tile,
@@ -69,13 +56,12 @@ io.on('connection', function(socket){
            });
        });
 
-
-       /**
-        *  Notify the players about the victor
-        */
+  // Let the players know the winner
        socket.on('gameEnded', function(data){
            socket.broadcast.to(data.room).emit('gameEnd', data);
        });
 });
 
-server.listen(SERVER_PORT);
+const listener = server.listen(process.env.PORT, () => {
+  console.log("Listening on port " + listener.address().port);
+});
