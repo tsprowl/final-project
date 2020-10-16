@@ -2,9 +2,11 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 
 .container {
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
   display: flex;
   background: #fff;
   align-content: center;
@@ -18,11 +20,13 @@
 h1 {
   color: white;
   text-align: center;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 
 table {
   border-collapse: collapse;
   margin: auto;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 
 td {
@@ -31,9 +35,11 @@ td {
   font-size: 80px;
   color: #fff;
   border-radius: 10%;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 #player {
   padding: 1rem;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 
 
@@ -43,6 +49,7 @@ body {
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 
 .button {
@@ -54,4 +61,5 @@ body {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
