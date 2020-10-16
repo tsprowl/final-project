@@ -165,9 +165,10 @@
 		 // horizontal
 		 console.log("Game board height: " + game.board.length);
 		 console.log("Game board width: " + game.board[0].length);
+		 maxPrev = N_SIZE - 1;
 		 var suc = false;
-		 for(let i = 0; i < game.board.length; i++) {
-			 for(let j = 0; j < game.board[0].length; j++) {
+		 for(let i = 0; i < N_SIZE; i++) {
+			 for(let j = 0; j < N_SIZE; j++) {
 				 let curType = game.board[i][j];
 				 if(curType == prevType && (prevType == P1 || prevType == P2)) {
 					 prev++;
@@ -194,8 +195,8 @@
 			 prevType = 0;
 		 }
 		 // vertical
-		 for(let i = 0; i < game.board.length; i++) {
-			 for(let j = 0; j < game.board[0].length; j++) {
+		 for(let i = 0; i < N_SIZE; i++) {
+			 for(let j = 0; j < N_SIZE; j++) {
 				 let curType = game.board[j][i];
 				 if(curType == prevType && (prevType == P1 || prevType == P2)) {
 					 prev++;
@@ -221,7 +222,7 @@
 		 }
 		 // top left to bottom right diagonal
 		 for(let i = 0; i < N_SIZE - maxPrev; i++) {
-			 for(let j = i; j < game.board[0].length; j++) {
+			 for(let j = i; j < N_SIZE; j++) {
 				 let curType = game.board[j][j];
 				 if(curType == prevType && (prevType == P1 || prevType == P2)) {
 					 prev++;
@@ -246,7 +247,7 @@
 			 prevType = 0;
 		 }
 		 // top right to bottom left diagonal
-		 for(let i = game.board.length - 1; i > maxPrev - 1; i--) {
+		 for(let i = N_SIZE - 1; i > maxPrev - 1; i--) {
 			 for(let j = i; j >= 0; j--) {
 				 let curType = game.board[i-j][j];
 				 if(curType == prevType && (prevType == P1 || prevType == P2)) {
@@ -310,12 +311,13 @@
             alert('Please enter your name.');
             return;
         }
-		if(boardSize < 3 || boardSize > 9) {
+		if(bSize < 3 || bSize > 9) {
 			alert('Invalid board size, must be 0-9');
 			return;
 		}
         socket.emit('createGame', {name: name, boardSize: bSize});
-		//N_SIZE = bSize;
+		N_SIZE = bSize;
+		maxPrev = N_SIZE - 1;
         player = new Player(name, P1);
     });
 
@@ -339,6 +341,7 @@
 		let size = data.boardSize;
 		console.log("board size: " + data.boardSize);
 		N_SIZE = size;
+		maxPrev = N_SIZE - 1;
 		init();
 		
         game = new Game(data.room, data.boardSize);
@@ -356,6 +359,7 @@
 		let message = "Guest: " + data.name;
 		console.log("Received final size: " + data.boardSize);
 		N_SIZE = data.boardSize;
+		maxPrev = N_SIZE - 1;
 		blockForReception = false;
 		waiting = false;
 		//while(blockForReception);
