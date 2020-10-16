@@ -8,7 +8,7 @@
     game;
 	let N_SIZE = 3;
 	let maxPrev = N_SIZE-1;
-	
+	let blockForReception = true;
     var Player = function(name, type){
         this.name = name;
         this.type = type;
@@ -346,30 +346,19 @@
         game.displayBoard(message);
 		document.getElementById("sel").innerHTML = "";
     });
-	socket.on('giveSize', function(data) {
-		socket.broadcast.to(data.room).emit('sizeResponse', {boardSize: N_SIZE});
+	socket.on('sendPlayData', function(data) {
+		socket.emit('playDataResponse', {boardSize: N_SIZE, room: data.room, name: data.name});
 		waiting = false;
 		console.log("Size requested, is " + N_SIZE);
 	});
-	socket.on('sizeResponse', function(data) {
-		console.log("Received size: " + data);
+	
+	socket.on('setVals', function(data){
+		let message = "Guest: " + data.name;
+		console.log("Received final size: " + data.boardSize);
 		N_SIZE = data.boardSize;
+		blockForReception = false;
 		waiting = false;
-	});
-    socket.on('player1', function(data){
-        var message = '<br>Host: ' + player.getPlayerName();
-		waiting = false;
-		//init();
-		document.getElementById("sel").innerHTML = "";
-        $('#userHello').html(message);
-		
-        player.setCurrentTurn(true);
-    });
-
-    socket.on('player2', function(data){
-        var message = "<br>Guest: " + data.name;
-		
-		waiting = false;
+		//while(blockForReception);
 		init();
 		document.getElementById("sel").innerHTML = "";
         // Create game for player 2
@@ -377,11 +366,22 @@
         game.displayBoard(message);
         player.setCurrentTurn(false);
     });
+	let playTMessage = "";
+    socket.on('player1', function(data){
+        var playMessage = '<br>Host: ' + player.getPlayerName();
+		waiting = false;
+		document.getElementById("sel").innerHTML = "";
+        $('#userHello').html(playMessage);
+		
+        player.setCurrentTurn(true);
+    });
 
-    /**
-     *  Opponent played their turn. Update UI
-     *  Allow the current player to play now
-     */
+    socket.on('player2', function(data){
+        var playTMessage = "<br>Guest: " + data.name;
+		
+		
+    });
+
     socket.on('turnPlayed', function(data){
         var row = data.tile.split('_')[1][0];
         var col = data.tile.split('_')[1][1];
@@ -390,18 +390,13 @@
         player.setCurrentTurn(true);
     });
 
-    /**
-     *  If the other player wins or game is tied, this event is received
-     *  Notify the user about either scenario and end the game.
-     */
     socket.on('gameEnd', function(data){
         game.endGame(data.message);
         socket.leave(data.room);
+		blockForReception = true;
     })
 
-    /**
-     *  End the game on any error event
-     */
+	
     socket.on('err', function(data){
         game.endGame(data.message);
     });

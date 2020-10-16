@@ -35,9 +35,12 @@ io.on('connection', function(socket){
           var room = io.nsps['/'].adapter.rooms[data.room];
           if (room && room.length == 1){
               socket.join(data.room);
+			  console.log("Getting size.");
+			  socket.emit('player2', {name: data.name, room: data.room})
+			  socket.broadcast.to(data.room).emit('sendPlayData', {room: data.room, name: data.name});
               socket.broadcast.to(data.room).emit('player1', {});
-			  socket.broadcast.to(data.room).emit('giveSize', {room: data.room});
-              socket.emit('player2', {name: data.name, room: data.room})
+			  console.log("Sending to P2");
+              
           }
           else{
 			  
@@ -49,7 +52,12 @@ io.on('connection', function(socket){
 			  }
           }
       });
+	socket.on('playDataResponse', function(data) {
+		console.log("Received size: " + data.boardSize);
 
+		socket.broadcast.to(data.room).emit('setVals', {room: data.room, boardSize: data.boardSize, name: data.name});
+
+	});
       /**
        *  Handle the turn played by either player and notify the other.
        */
