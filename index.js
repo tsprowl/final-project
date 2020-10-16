@@ -5,6 +5,8 @@ var io = require('socket.io') (server);
 
 var rooms = 0;
 
+let SERVER_PORT = 4999;
+
 app.use(express.static('.'));
 
 app.get('/', function (req, res){
@@ -20,7 +22,8 @@ io.on('connection', function(socket){
 
      socket.on('createGame', function(data){
          socket.join('room-' + ++rooms);
-         socket.emit('newGame', {name: data.name, room: 'room-'+rooms});
+		 console.log("createGame boardSize: " + data.boardSize);
+         socket.emit('newGame', {name: data.name, room: 'room-'+rooms, boardSize: data.boardSize});
      });
 
 
@@ -30,15 +33,14 @@ io.on('connection', function(socket){
 
       socket.on('joinGame', function(data){
           var room = io.nsps['/'].adapter.rooms[data.room];
-		  var localData = io.nsps['/'].adapter.rooms;
-		 // for(int i = 0; i < localData.length; i++) {
-		//	  socket.emit('err', {message: 'Room...' + i});
-		 // }
-		//	if(room) Console.log(room.length);
-          if (room && room.length === 1){
+          if (room && room.length == 1){
               socket.join(data.room);
+			  console.log("Getting size.");
+			  socket.emit('player2', {name: data.name, room: data.room})
+			  socket.broadcast.to(data.room).emit('sendPlayData', {room: data.room, name: data.name});
               socket.broadcast.to(data.room).emit('player1', {});
-              socket.emit('player2', {name: data.name, room: data.room})
+			  console.log("Sending to P2");
+              
           }
           else{
 			  
@@ -50,7 +52,12 @@ io.on('connection', function(socket){
 			  }
           }
       });
+	socket.on('playDataResponse', function(data) {
+		console.log("Received size: " + data.boardSize);
 
+		socket.broadcast.to(data.room).emit('setVals', {room: data.room, boardSize: data.boardSize, name: data.name});
+
+	});
       /**
        *  Handle the turn played by either player and notify the other.
        */
@@ -71,4 +78,4 @@ io.on('connection', function(socket){
        });
 });
 
-server.listen(5000);
+server.listen(SERVER_PORT);
