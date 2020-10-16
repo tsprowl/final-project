@@ -1,6 +1,8 @@
 # Modifiable Tic-Tac-Toe : CS4241 Final Project Team 27
 ## by Tyler Sprowl, Garrett Smith and Phoebe Yeung
 
+http://finalproj-cs4241.glitch.me/
+
 1. DESCRIPTION
 
     This project sets up a lobby system allowing two players to play tictactoe with each other in a lobby. Lobby creation requires a K x K board size, where K is set by the lobby creator. The win condition for this game is to match K tiles in a row. 
