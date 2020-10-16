@@ -1,14 +1,57 @@
-.tile{
-	width: 80px;
-	height: 80px;
-	font-size: 60px;
-	font-family: Helvetica;
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-.gameBoard{
-	display: none;
+.container {
+  display: flex;
+  background: #fff;
+  align-content: center;
+  justify-content: center;
+  flex-direction: column;
+  min-width: 700px;
+  min-height: 500px;
+  border-radius: 5%;
+  margin: auto;
+}
+h1 {
+  color: white;
+  text-align: center;
 }
 
-.center{
-	margin: 0 auto;
+table {
+  border-collapse: collapse;
+  margin: auto;
+}
+
+td {
+  background-color: #666;
+  border: 5px solid white;
+  font-size: 80px;
+  color: #fff;
+  border-radius: 10%;
+}
+#player {
+  padding: 1rem;
+}
+
+
+body {
+  display: flex;
+  background: url('https://cdn.glitch.com/f1c540e0-d06f-4c84-81fe-bd01e4f31410%2Fcool-background.png?v=1602724826230');
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
