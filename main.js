@@ -1,9 +1,9 @@
 (function(){
     // Types of players
     var P1 = 'X', P2 = 'O';
-	let SERVER_PORT = 4999;
+	let SERVER_PORT = 6000;
 	let waiting = true;
-    var socket = io.connect('http://localhost:' + SERVER_PORT),
+    var socket = window.ws = io(`${window.location.host}`),
     player,
     game;
 	let N_SIZE = 3;
@@ -33,15 +33,9 @@
         return this.type
     }
 
-    /**
-     *  Returns currentTurn to determine if it's the player's turn
-     */
     Player.prototype.getCurrentTurn = function(){
         return this.currentTurn;
     }
-
-
-
 
     /**
      *  Game class
@@ -52,16 +46,15 @@
         this.moves = 0;
     }
 
-    /**
-     *  Create the Game board by attaching event listeners to the buttons
-     */
+  
+    // Create the Game board by attaching event listeners to the buttons
     Game.prototype.createGameBoard = function(){
 		let arr = [];
 		for(var i = 0; i < N_SIZE; i++) {
 			arr.push("");
 		}
-        for(var i = 0; i < N_SIZE; i++){
-			switch (N_SIZE) { // This is bad but I'm really not sure how to fix it otherwise
+    for(var i = 0; i < N_SIZE; i++){
+			switch (N_SIZE) {
 				case 3:
 					this.board.push(['', '', '']);
 					break;
@@ -100,13 +93,10 @@
 						alert('Waiting for player!');
 						return;
 					}
-                    if($(this).prop('disabled')) {
+          if($(this).prop('disabled')) {
 						alert("Can't overwrite tile.");
 						return;
 					}
-
-                    
-
                     game.playTurn(this);
                     game.updateBoard(player.getPlayerType(), row, col, this.id);
 
@@ -119,6 +109,7 @@
         }
     }
 
+  // Function to display the board
     Game.prototype.displayBoard = function(message){
         $('.menu').css('display', 'none');
         $('.gameBoard').css('display', 'block');
@@ -126,17 +117,18 @@
         this.createGameBoard();
     }
 
+  // Function to update the board
     Game.prototype.updateBoard = function(type, row, col, tile){
-		
-        $('#'+tile).text(type);
-		/*var mycontent = document.createElement("p");
-		mycontent.style.fontSize = (360/N_SIZE)/2 + "px;";
-		$('#'+tile)
-		var mydiv = document.getElementById("mydiv");
-		
-		mycontent.appendChild(document.createTextNode("This is a paragraph"));*/
-		//mydiv.appendChild(mycontent);
-		//$('#'+tile).style.fontSize = 360/N_SIZE + "px;";
+      console.log(tile);
+		  var element = document.getElementById(tile);
+      let fSize = 0;
+      if(N_SIZE > 5) {
+        fSize = 120/N_SIZE;
+      } else {
+        fSize = 240/N_SIZE;
+      }
+       element.innerHTML = "<p style='font-size: " + fSize + "px;'>" + type + "</p><br />"
+      
         $('#'+tile).prop('disabled', true);
         this.board[row][col] = type;
         this.moves++;
@@ -146,9 +138,7 @@
         return this.roomId;
     }
 
-    /**
-     *  Send an update to the opponent to update their UI
-     */
+     //  Send an update to the opponent to update their UI
     Game.prototype.playTurn = function(tile){
         var clickedTile = $(tile).attr('id');
         var turnObj = {
@@ -162,7 +152,8 @@
      Game.prototype.checkWinner = function(){
 		 let prev = 0;
 		 let prevType = 0;
-		 // horizontal
+       
+		 // Check for horizontal victory
 		 console.log("Game board height: " + game.board.length);
 		 console.log("Game board width: " + game.board[0].length);
 		 maxPrev = N_SIZE - 1;
@@ -180,21 +171,15 @@
 				 if(prev >= maxPrev) {
 					 suc = true;
 					game.announceWinner();
-					console.log("Winner: " + prevType);
 				 }
-				 console.log("Horiz");
-				  console.log("PrevType: " + prevType);
-				 console.log("Prev: " + prev);
-				 console.log("curType: " + curType);
-				 console.log("i: " + i);
-				 console.log("j: " + j);
 			 }
 			 
-			 
+	
 			 prev = 0;
 			 prevType = 0;
 		 }
-		 // vertical
+       
+		 // Check for vertical victory
 		 for(let i = 0; i < N_SIZE; i++) {
 			 for(let j = 0; j < N_SIZE; j++) {
 				 let curType = game.board[j][i];
@@ -207,20 +192,14 @@
 				  if(prev >= maxPrev) {
 					  suc = true;
 					game.announceWinner();
-					console.log("Winner: " + prevType);
 				 }
-				 console.log("Vert");
-				  console.log("PrevType: " + prevType);
-				 console.log("Prev: " + prev);
-				 console.log("curType: " + curType);
-				 console.log("i: " + i);
-				 console.log("j: " + j);
 			 }
 			
 			 prev = 0;
 			 prevType = 0;
 		 }
-		 // top left to bottom right diagonal
+       
+		 // Check for diagonal victory (top left to bottom right)
 		 for(let i = 0; i < N_SIZE - maxPrev; i++) {
 			 for(let j = i; j < N_SIZE; j++) {
 				 let curType = game.board[j][j];
@@ -236,7 +215,7 @@
 					console.log("Winner: " + prevType);
 				 }
 				 console.log("ForDiag");
-				  console.log("PrevType: " + prevType);
+				 console.log("PrevType: " + prevType);
 				 console.log("Prev: " + prev);
 				 console.log("curType: " + curType);
 				 console.log("i: " + i);
@@ -246,7 +225,7 @@
 			 prev = 0;
 			 prevType = 0;
 		 }
-		 // top right to bottom left diagonal
+     // Check for diagonal victory (top right to bottom left)
 		 for(let i = N_SIZE - 1; i > maxPrev - 1; i--) {
 			 for(let j = i; j >= 0; j--) {
 				 let curType = game.board[i-j][j];
@@ -262,7 +241,7 @@
 					console.log("Winner: " + prevType);
 				 }
 				 console.log("BackDiag");
-				  console.log("PrevType: " + prevType);
+				 console.log("PrevType: " + prevType);
 				 console.log("Prev: " + prev);
 				 console.log("curType: " + curType);
 				 console.log("i: " + i);
@@ -272,15 +251,6 @@
 			 prev = 0;
 			 prevType = 0;
 		 }
-         /*Player.wins.forEach(function(winningPosition){
-             // We're checking for every winning position if the player has achieved it
-             // Keep in mind that we are using bitwise AND here not a logical one
-
-             if(winningPosition & currentPlayerPositions == winningPosition){
-                 game.announceWinner();
-                 console.log("Winner");
-             }
-         });*/
 
          var tied = this.moves >= N_SIZE * N_SIZE;
          if(tied && !suc){
@@ -297,7 +267,6 @@
          location.reload();
      }
 
-	 
      Game.prototype.endGame = function(message){
          alert(message);
          location.reload();
@@ -312,7 +281,7 @@
             return;
         }
 		if(bSize < 3 || bSize > 9) {
-			alert('Invalid board size, must be 0-9');
+			alert('Invalid board size, must be 3-9');
 			return;
 		}
         socket.emit('createGame', {name: name, boardSize: bSize});
@@ -326,7 +295,7 @@
         var name = $('#nameJoin').val();
         var roomID = $('#room').val();
         if(!name || !roomID){
-            alert('Please enter your name and game ID.');
+            alert('Please enter your name and room number.');
             return;
         }
         socket.emit('joinGame', {name: name, room: roomID});
@@ -362,14 +331,15 @@
 		maxPrev = N_SIZE - 1;
 		blockForReception = false;
 		waiting = false;
-		//while(blockForReception);
 		init();
 		document.getElementById("sel").innerHTML = "";
+    
         // Create game for player 2
         game = new Game(data.room);
         game.displayBoard(message);
         player.setCurrentTurn(false);
     });
+  
 	let playTMessage = "";
     socket.on('player1', function(data){
         var playMessage = '<br>Host: ' + player.getPlayerName();
@@ -382,8 +352,6 @@
 
     socket.on('player2', function(data){
         var playTMessage = "<br>Guest: " + data.name;
-		
-		
     });
 
     socket.on('turnPlayed', function(data){
@@ -400,7 +368,6 @@
 		blockForReception = true;
     })
 
-	
     socket.on('err', function(data){
         game.endGame(data.message);
     });
@@ -408,15 +375,13 @@
 	  boxes = [],
 	  score,
 	  moves;
-
-	/**
-	 * Initializes the Tic Tac Toe 
-	 */
+	
+	 // Initializes the Tic Tac Toe 
 	function init() {
 	  var board = document.createElement('table');
 	  board.setAttribute('border', 1);
 	  board.setAttribute('cellspacing', 0);
-
+    board.setAttribute('table-layout', 'fixed');
 	  var identifier = 1;
 	  for (var i = 0; i < N_SIZE; i++) {
 		var row = document.createElement('tr');
@@ -430,12 +395,10 @@
 		  cell.setAttribute('font-size', (360/N_SIZE) + "px");
 		  cell.setAttribute('id', 'button_' + i + j);
 		  cell.classList.add('tile');
-		  //cell.identifier = identifier;
 		  row.appendChild(cell);
 		  boxes.push(cell);
-		  //identifier += identifier;
 		}
-	  }
+	}
 
 	  document.getElementById('tictactoe').appendChild(board);
 	}
