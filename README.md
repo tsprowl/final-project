@@ -29,11 +29,18 @@
         
 # REFERENCES USED
 https://support.glitch.com/t/secure-websocket-server-in-glitch-project/3093
+
 https://stackoverflow.com/questions/10050799/socket-io-websocket-send-message-not-working-with-firefox-and-chrome
+
 https://socket.io/docs/namespaces/
+
 and all of https://socket.io/
+
 https://medium.com/@antoniomignano/node-js-socket-io-express-tic-tac-toe-10cff9108f7
+
 https://dev.to/bornasepic/pure-and-simple-tic-tac-toe-with-javascript-4pgn
+
 https://ayushgp.github.io/Tic-Tac-Toe-Socket-IO/
+
 https://medium.com/@dineshmaxi/understanding-the-use-of-websockets-with-one-example-coding-part-35912679a19b
 
