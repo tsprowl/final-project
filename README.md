@@ -3,6 +3,7 @@
 
 http://finalproj-cs4241.glitch.me/
 
+
 1. DESCRIPTION
 
     This project sets up a lobby system allowing two players to play tictactoe with each other in a lobby. Lobby creation requires a K x K board size, where K is set by the lobby creator. The win condition for this game is to match K tiles in a row. 
@@ -27,7 +28,7 @@ http://finalproj-cs4241.glitch.me/
         
 6. PROJECT VIDEO
     
-    [TODO]
+https://youtu.be/iMezVN9ATgo
         
 # REFERENCES USED
 https://support.glitch.com/t/secure-websocket-server-in-glitch-project/3093
